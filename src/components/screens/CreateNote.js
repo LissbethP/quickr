@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import theme from "../../theme";
 import { Context as NoteContext } from "../../providers/NoteContext";
 import { Context as AuthContext } from "../../providers/AuthContext";
-import { Picker } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 const CreateNote = ({route, navigation }) => {
   const {category2} = route.params;

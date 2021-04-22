@@ -6,7 +6,7 @@ import theme from "../../theme";
 
 const { width, height } = Dimensions.get("screen");
 
-const Note = ({ title, content, timestamp, category }) => {
+const Note = ({ title, content, timestamp }) => {
   return (
     <Card style={styles.container}>
       <Card.Title title={title} />

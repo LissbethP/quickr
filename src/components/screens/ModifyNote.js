@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Caption, IconButton, TextInput } from "react-native-paper";
 import { format } from "date-fns";
 import theme from "../../theme";
+import { Picker } from "@react-native-picker/picker";
 import { Context as NoteContext } from "../../providers/NoteContext";
 import { Context as AuthContext } from "../../providers/AuthContext";
 
@@ -19,7 +20,6 @@ const ModifyNote = ({ navigation }) => {
       setTitle(notesState.currentNote.title);
       setContent(notesState.currentNote.content);
       setCategory(notesState.currentNote.category);
-
     }
   }, [notesState.currentNote]);
 
