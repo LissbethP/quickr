@@ -20,9 +20,9 @@ const noteReducer = (state, action) => {
             return {
               ...note,
               title: action.payload.note.title,
+              category: action.payload.note.category,
               content: action.payload.note.content,
               timestamp: action.payload.note.timestamp,
-              category: action.payload.note.category,
             };
           }
 
@@ -38,12 +38,12 @@ const noteReducer = (state, action) => {
 const notesRef = firebase.firestore().collection("notes");
 
 // Almacena una nueva nota para el usuario actual
-const createNote = (dispatch) => (title, content, timestamp, category, author) => {
+const createNote = (dispatch) => (title, category, content, timestamp, author) => {
   const data = {
     title,
+    category,
     content,
     timestamp,
-    category,
     userId: author,
   };
 
@@ -58,34 +58,10 @@ const createNote = (dispatch) => (title, content, timestamp, category, author) =
 };
 
 // Obtener las notas del usuario
-const getNotes = (dispatch) => (userId) => {
+const getNotes = (dispatch) => (userId,category) => {
   notesRef
     .where("userId", "==", userId)
-    .orderBy("timestamp", "desc")
-    .onSnapshot(
-      (querySnapshot) => {
-        const notes = [];
-
-        querySnapshot.forEach((doc) => {
-          const note = doc.data();
-          note.id = doc.id;
-          notes.push(note);
-        });
-
-        dispatch({ type: "getNotes", payload: notes });
-        dispatch({ type: "errorMessage", payload: "Your note is save!" });
-      },
-      (error) => {
-        dispatch({ type: "errorMessage", payload: error.message });
-      }
-    );
-};
-
-// Obtener las notas del usuario por categoria
-const getNotesByCategory = (dispatch) => (userId,category) => {
-  notesRef
-    .where("userId", "==", userId)
-    .where("category", "==", category)
+    .where("category","==",category)
     .orderBy("timestamp", "desc")
     .onSnapshot(
       (querySnapshot) => {
@@ -117,14 +93,14 @@ const setCurrentNote = (dispatch) => (note) => {
 };
 
 // Actualizar una nota existente
-const updateNote = (dispatch) => (id, title, content, timestamp, category) => {
+const updateNote = (dispatch) => (id, title, content, timestamp) => {
   notesRef
     .doc(id)
     .update({ title, content, timestamp })
     .then(() => {
       dispatch({
         type: "updateNote",
-        payload: { note: { id, title, content, timestamp,category } },
+        payload: { note: { id, title, content, timestamp } },
       });
       dispatch({ type: "errorMessage", payload: "Note updated!" });
     })
@@ -146,7 +122,6 @@ export const { Provider, Context } = createDataContext(
   {
     notes: [],
     errorMessage: "",
-    categories: ["Personal","Work","Ideas","List"],
-    currentNote: { id: "", title: "", content: "", timestamp: "", category:"" },
+    currentNote: { id: "", category: "",title: "", content: "", timestamp: "" },
   }
 );

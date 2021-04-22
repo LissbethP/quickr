@@ -6,12 +6,12 @@ import { Context as NoteContext } from "../../providers/NoteContext";
 import NoteList from "../shared/NoteList";
 import Toast from "react-native-toast-message";
 
-const Home = ({ navigation }) => {
+const Home = ({route, navigation }) => {
   const { state, signout } = useContext(AuthContext);
   const { state: noteState, getNotes, clearMessage } = useContext(NoteContext);
-
+  const {category} = route.params;
   useEffect(() => {
-    getNotes(state.user.id);
+    getNotes(state.user.id,category);
   }, []);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const Home = ({ navigation }) => {
       clearMessage();
     }
   }, [noteState.errorMessage]);
+
 
   return (
     <>
@@ -42,7 +43,7 @@ const Home = ({ navigation }) => {
         icon="plus"
         style={styles.fab}
         onPress={() => {
-          navigation.navigate("CreateNote");
+          navigation.navigate("CreateNote",{category2:category});
         }}
       />
     </>
