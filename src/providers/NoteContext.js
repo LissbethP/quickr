@@ -22,6 +22,7 @@ const noteReducer = (state, action) => {
               title: action.payload.note.title,
               content: action.payload.note.content,
               timestamp: action.payload.note.timestamp,
+              category: action.payload.note.category,
             };
           }
 
@@ -37,11 +38,12 @@ const noteReducer = (state, action) => {
 const notesRef = firebase.firestore().collection("notes");
 
 // Almacena una nueva nota para el usuario actual
-const createNote = (dispatch) => (title, content, timestamp, author) => {
+const createNote = (dispatch) => (title, content, timestamp, category, author) => {
   const data = {
     title,
     content,
     timestamp,
+    category,
     userId: author,
   };
 
@@ -79,6 +81,31 @@ const getNotes = (dispatch) => (userId) => {
     );
 };
 
+// Obtener las notas del usuario por categoria
+const getNotesByCategory = (dispatch) => (userId,category) => {
+  notesRef
+    .where("userId", "==", userId)
+    .where("category", "==", category)
+    .orderBy("timestamp", "desc")
+    .onSnapshot(
+      (querySnapshot) => {
+        const notes = [];
+
+        querySnapshot.forEach((doc) => {
+          const note = doc.data();
+          note.id = doc.id;
+          notes.push(note);
+        });
+
+        dispatch({ type: "getNotes", payload: notes });
+        dispatch({ type: "errorMessage", payload: "Your note is save!" });
+      },
+      (error) => {
+        dispatch({ type: "errorMessage", payload: error.message });
+      }
+    );
+};
+
 // Limpiar el mensaje del contexto
 const clearMessage = (dispatch) => () => {
   dispatch({ type: "errorMessage", payload: "" });
@@ -90,14 +117,14 @@ const setCurrentNote = (dispatch) => (note) => {
 };
 
 // Actualizar una nota existente
-const updateNote = (dispatch) => (id, title, content, timestamp) => {
+const updateNote = (dispatch) => (id, title, content, timestamp, category) => {
   notesRef
     .doc(id)
     .update({ title, content, timestamp })
     .then(() => {
       dispatch({
         type: "updateNote",
-        payload: { note: { id, title, content, timestamp } },
+        payload: { note: { id, title, content, timestamp,category } },
       });
       dispatch({ type: "errorMessage", payload: "Note updated!" });
     })
@@ -119,6 +146,7 @@ export const { Provider, Context } = createDataContext(
   {
     notes: [],
     errorMessage: "",
-    currentNote: { id: "", title: "", content: "", timestamp: "" },
+    categories: ["Personal","Work","Ideas","List"],
+    currentNote: { id: "", title: "", content: "", timestamp: "", category:"" },
   }
 );

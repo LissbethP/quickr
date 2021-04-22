@@ -41,6 +41,7 @@ const NoteList = ({ navigation, notes }) => {
                 title={item.title}
                 content={item.content}
                 timestamp={item.timestamp}
+                category={item.category}
               />
             </TouchableOpacity>
           </>

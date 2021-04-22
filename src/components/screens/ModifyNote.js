@@ -12,11 +12,14 @@ const ModifyNote = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [timestamp, setTimestamp] = useState(Date.now());
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     if (notesState.currentNote.id) {
       setTitle(notesState.currentNote.title);
       setContent(notesState.currentNote.content);
+      setCategory(notesState.currentNote.category);
+
     }
   }, [notesState.currentNote]);
 
@@ -25,7 +28,8 @@ const ModifyNote = ({ navigation }) => {
       notesState.currentNote.id,
       title ? title : "New note",
       content,
-      timestamp
+      timestamp,
+      category
     );
   };
 
@@ -55,6 +59,25 @@ const ModifyNote = ({ navigation }) => {
       <Caption>{`${format(timestamp, "eee H:m")}, | ${
         content.length
       } characters`}</Caption>
+
+<View style={styles.direction}>
+      <Caption>Category</Caption>
+      <Picker
+        style={styles.picker}
+        onValueChange={(itemValue) => {
+          setCategory(itemValue);
+        }}
+      >
+        {notesState.categories.map((category, index) => (
+          <Picker.Item
+            key={index}
+            label={category}
+            value={category}
+          />
+        ))}
+      </Picker>
+      </View>
+
       <TextInput
         multiline
         style={styles.contentInput}
@@ -87,6 +110,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
+  picker: {
+    fontSize: 12,
+    width: 300,
+    marginBottom: 5,
+    marginTop: 5,
+    alignSelf: "center",
+    paddingVertical: 10,
+  },
+  direction:{
+    flexDirection:"row",
+    justifyContent:"center",
+  }
 });
 
 export default ModifyNote;

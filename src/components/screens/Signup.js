@@ -8,6 +8,7 @@ import theme from "../../theme";
 const { width, height } = Dimensions.get("screen");
 
 const Signup = ({ navigation }) => {
+  
   return (
     <View style={styles.container}>
       <Logo />

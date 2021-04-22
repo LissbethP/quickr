@@ -4,7 +4,10 @@ import { Button, Caption, TextInput } from "react-native-paper";
 import { firebase } from "../../firebase";
 import { validate } from "email-validator";
 import Alert from "../shared/Alert";
+import passwordValidator from 'password-validator';
 import { Context as AuthContext } from "../../providers/AuthContext";
+
+const schema = new passwordValidator().is().min(8).is().max(100).has().uppercase().has().lowercase().has().digits(2).has().not().spaces() 
 
 const SignupForm = ({ navigation }) => {
   const { state, signup } = useContext(AuthContext);

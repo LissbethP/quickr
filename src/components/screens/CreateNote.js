@@ -3,21 +3,23 @@ import { StyleSheet, View } from "react-native";
 import { Caption, IconButton, TextInput } from "react-native-paper";
 import { format } from "date-fns";
 import theme from "../../theme";
+import { Picker } from "@react-native-picker/picker";
 import { Context as NoteContext } from "../../providers/NoteContext";
 import { Context as AuthContext } from "../../providers/AuthContext";
 
 const CreateNote = ({ navigation }) => {
-  const { createNote } = useContext(NoteContext);
+  const { state: notesState,createNote} = useContext(NoteContext);
   const { state } = useContext(AuthContext);
   const [title, setTitle] = useState("");
   const [timestamp, setTimestamp] = useState(Date.now());
   const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
 
   const handleSaveNote = () => {
     if (!title) {
       setTitle("New note");
-      createNote("New note", content, timestamp, state.user.id);
-    } else createNote(title, content, timestamp, state.user.id);
+      createNote("New note", content, timestamp, category, state.user.id);
+    } else createNote(title, content, timestamp, category, state.user.id);
 
     navigation.navigate("Home");
   };
@@ -48,6 +50,25 @@ const CreateNote = ({ navigation }) => {
       <Caption>{`${format(timestamp, "eee H:m")}, | ${
         content.length
       } characters`}</Caption>
+      
+      <View style={styles.direction}>
+      <Caption>Category</Caption>
+      <Picker
+        style={styles.picker}
+        onValueChange={(itemValue) => {
+          setCategory(itemValue);
+        }}
+      >
+        {notesState.categories.map((category, index) => (
+          <Picker.Item
+            key={index}
+            label={category}
+            value={category}
+          />
+        ))}
+      </Picker>
+      </View>
+
       <TextInput
         multiline
         style={styles.contentInput}
@@ -80,6 +101,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
+  picker: {
+    fontSize: 12,
+    width: 300,
+    marginBottom: 5,
+    marginTop: 5,
+    alignSelf: "center",
+    paddingVertical: 10,
+  },
+  direction:{
+    flexDirection:"row",
+    justifyContent:"center",
+  }
 });
 
 export default CreateNote;
